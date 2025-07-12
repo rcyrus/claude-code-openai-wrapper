@@ -44,6 +44,7 @@ An OpenAI API-compatible wrapper for Claude Code, allowing you to use Claude Cod
 ### ⚡ **Advanced Features**
 - **System prompt support** via SDK options
 - **Optional tool usage** - Enable Claude Code tools (Read, Write, Bash, etc.) when needed
+  - **⚠️ Roo Code Users**: Must set `enable_tools: true` for file operations and commands
 - **Fast default mode** - Tools disabled by default for OpenAI API compatibility
 - **Development mode** with auto-reload (`uvicorn --reload`)
 - **Interactive API key protection** - Optional security with auto-generated tokens
@@ -303,6 +304,7 @@ print(response.choices[0].message.content)
 # Output: Fast response without tool usage (default behavior)
 
 # Enable tools when you need them (e.g., to read files)
+# IMPORTANT: When using with Roo Code, always set enable_tools=True to enable file operations and commands
 response = client.chat.completions.create(
     model="claude-3-5-sonnet-20241022",
     messages=[
@@ -310,6 +312,27 @@ response = client.chat.completions.create(
     ],
     extra_body={"enable_tools": True}  # Enable tools for file access
 )
+### 🤖 **Using with Roo Code**
+
+**IMPORTANT**: When using this wrapper with Roo Code, you must **always enable tools** by setting `enable_tools: true` in your requests. Roo Code requires tool access for file operations, command execution, and other core functionality.
+
+```python
+# Example: Enabling tools for Roo Code
+response = client.chat.completions.create(
+    model="claude-3-5-sonnet-20241022",
+    messages=[
+        {"role": "user", "content": "Create a Python web application"}
+    ],
+    extra_body={"enable_tools": True}  # REQUIRED for Roo Code functionality
+)
+```
+
+Without `enable_tools: true`, Roo Code will be limited to simple Q&A responses and won't be able to:
+- Read or write files
+- Execute commands
+- Browse the web
+- Perform any file system operations
+
 print(response.choices[0].message.content)
 # Output: Claude will actually read your directory and list the files!
 
